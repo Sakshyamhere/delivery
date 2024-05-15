@@ -70,13 +70,13 @@ function Landing() {
         </Splide>
       </div>
       <p className="text-center my-4 mt-10 font-semibold text-2xl">
-        Shop by categories
+        Shop by category
       </p>
       <div className="mx-auto">
         <Category />
       </div>
       <p className="text-center my-4 mt-10 font-semibold text-2xl">
-        Suggested for :{language}
+        Suggested for you
       </p>
       <div className="mx-auto">
             <Products/>
