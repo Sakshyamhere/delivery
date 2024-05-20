@@ -17,15 +17,15 @@ function slug() {
   }, [router.query.slug, products.length]);
 
   const fetchDataWithPrerequisite = async () => {
-    // await axios
-    //   .get(
-    //     `${BACKEND_URL}/api/v1/products/getproductswithcategory?category=${router.query.slug[0]}&subcategory=${router.query.slug[1]}`
-    //   )
-    //   .then((res) => {
-    //     setProducts(res.data.products);
-    //     console.log(products);
-    //   })
-    //   .catch((err) => console.log(err));
+    await axios
+      .get(
+        `${BACKEND_URL}/api/v1/products/getproductswithcategory?category=${router.query.slug[0]}&subcategory=${router.query.slug[1]}`
+      )
+      .then((res) => {
+        setProducts(res.data.products);
+        console.log(products);
+      })
+      .catch((err) => console.log(err));
     console.log(router.query.slug[0], router.query.slug[1]);
   };
   const fetchSubCategory = async () => {
@@ -43,7 +43,7 @@ function slug() {
       <div className="flex flex-row">
         <div className="border-r-2 w-[6rem] md:w-[11rem] shadow-sm h-screen fixed mb-10 p-2">
           <div className="overflow-y-scroll no-scrollbar h-screen">
-            <div className="h-[1000px] md:h-[500px] lg:h-[100px]">
+            <div className="h-[1300px] md:h-[500px] lg:h-[100px]">
               {subCategory.map((item)=>(
                    <Link
                 className={`flex justify-center my-2 ${
@@ -52,6 +52,7 @@ function slug() {
                     : "hover:bg-gray-200 hover:border-l-red-200"
                 }`}
                 href={`${router.query.slug[0]}/${item.subcategory}`}
+                key={item.id}
               >
                 <div
                   className={`flex flex-col px-2 md:flex-row items-center justify-between mx-auto w-[6rem] `}
@@ -73,7 +74,7 @@ function slug() {
         <div>
           <div className="ml-[6rem] md:ml-[12rem] grid gap-1 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 m-4">
             {products.map((item) => (
-              <div className="shadow-inner shadow-gray-100 p-2 rounded-md mx-2 my-2">
+              <div className="shadow-inner shadow-gray-100 p-2 rounded-md mx-2 my-2" key={item.id}>
                 <Link className="p-2" href="/">
                   <img alt="dairy-bread-eggs" src={item.image} />
                   <p className="my-1 font-semibold">{item.name}</p>

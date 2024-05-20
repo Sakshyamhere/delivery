@@ -8,8 +8,7 @@ const handler = async (req, res) => {
     }
 
     try {
-        const response = await axios.get(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&components=country:np&key=${process.env.API_KEY}`);
-        
+        const response = await axios.get(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${query}&key=${process.env.API_KEY}`);
         if (response.data.status !== 'OK') {
             return res.status(500).json({ error: 'Failed to fetch location data', details: response.data });
         }

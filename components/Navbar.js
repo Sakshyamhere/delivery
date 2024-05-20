@@ -5,6 +5,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { MdLanguage } from "react-icons/md";
 import { MyContext } from "@/context/MyContext";
 import axios from "axios";
+import Map from "./Map";
 
 function Navbar() {
   const modalRef = useRef();
@@ -15,7 +16,8 @@ function Navbar() {
   const [askForLocation, setAskForLocation] = useState(false);
   const [searchForLocation, setSearchForLocation] = useState(false);
   const [address, setAddress] = useState("");
-
+  const [showMap, setShowMap] = useState(false);
+  const [sendMap, setSendMap] = useState([]);
   useEffect(() => {
     const storedAddress = JSON.parse(localStorage.getItem("Address"));
     if (storedAddress) {
@@ -32,19 +34,19 @@ function Navbar() {
     }
 
     document.addEventListener("mousedown", isClickedOutside);
-    if (searchForLocation == true || askForLocation==true) {
-      document.body.style.overflow = 'hidden'
+    if (searchForLocation == true || askForLocation == true) {
+      document.body.style.overflow = "hidden";
     }
     return () => {
       document.removeEventListener("mousedown", isClickedOutside);
-      document.body.style.overflow = 'visible'
+      document.body.style.overflow = "visible";
     };
-   
-  }, [searchForLocation, predLocation.length]);
+  }, [searchForLocation, predLocation.length,showMap]);
   const isClickedOutside = (e) => {
     if (
       searchForLocation &&
       modalRef.current &&
+      !showMap &&
       !modalRef.current.contains(e.target)
     ) {
       setSearchForLocation(false);
@@ -94,6 +96,19 @@ function Navbar() {
     } catch (err) {
       setPredLocation([]);
     }
+  };
+  const handleAddressClick = (lat, lng) => {
+    const address = {
+      latitude: lat,
+      longitude: lng,
+    };
+    localStorage.setItem("Address", JSON.stringify(address));
+    fetchLocation(address.latitude, address.longitude);
+    setLocation(true);
+    setAskForLocation(false);
+    setShowMap(false);
+    setAskForLocation(false);
+    setSearchForLocation(false);
   };
   return (
     <main>
@@ -149,6 +164,7 @@ function Navbar() {
           <FaCartArrowDown className="text-4xl hidden lg:block lg:mr-5 lg:ml-5 lg:mb-0 cursor-pointer" />
         </div>
       </header>
+
       {askForLocation && (
         <div className="fixed z-30 flex justify-center w-full pt-[40vh]">
           <div className="bg-gray-300 shadow-sm rounded-md p-10">
@@ -177,12 +193,15 @@ function Navbar() {
         </div>
       )}
       {searchForLocation && (
-        <div className="fixed z-30 md:flex md:justify-center w-full md:pt-[30vh] h-full md:pb-[30vh] md:h-auto">
-          <div className="bg-gray-300 rounded-md p-4 h-full md:h-[50vh] md:w-[50%]" ref={modalRef}>
+        <div className="fixed z-30 md:flex md:justify-center w-full md:pt-[10%] h-full md:pb-[10%] md:h-auto">
+          <div
+            className="bg-gray-100 rounded-md p-4 h-full md:h-auto md:w-[50%]"
+            ref={modalRef}
+          >
             <div className="flex items-center justify-between">
               <div className="flex">
-                <FaLocationDot className="mx-2" />
-                Please provide your location
+                <FaLocationDot className="m-1" />
+                <p className="text-xl">Please provide your location</p>
               </div>
             </div>
             <div className="flex justify-center items-center mt-3">
@@ -196,13 +215,39 @@ function Navbar() {
               </div>
             </div>
             {predLocation.length > 0 && searchedLocation.length > 0 && (
-              <div className="">
-                {predLocation.map((item) => (
-                  <p className=" overflow-ellipsis md:text-nowrap" key={item.place_id}>{item.description}</p>
-                ))}
+              <div className="overflow-scroll">
+                <div className="h-full overflow-y-auto">
+                  {predLocation.map((item) => (
+                    <div key={item.place_id}>
+                      <div>
+                        <button
+                          className="w-full my-2 border-[2px] p-3 bg-slate-50 rounded-md"
+                          onClick={() => {
+                            setShowMap(true);
+                            setSendMap(item);
+                          }}
+                        >
+                          <div className="flex flex-row items-center">
+                            <FaLocationDot className="m-1" />
+                            <p>{item.description}</p>
+                          </div>
+                        </button>
+                        <br />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
-            {searchedLocation.length == 0 && <div>Enter to know location</div>}
+          </div>
+        </div>
+      )}
+      {showMap && (
+        <div>
+          <div className="fixed z-30 md:flex md:justify-center w-full h-full md:my-[10%] md:h-auto">
+            <div className="rounded-md">
+              <Map handleAddressClick={handleAddressClick} position={sendMap} />
+            </div>
           </div>
         </div>
       )}

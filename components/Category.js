@@ -105,7 +105,6 @@ function Category() {
         "https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/layout-engine/2022-11/Slice-20.png",
     },
   ];
-  console.log(category)
   return (
     <div className="flex justify-center">
       <div className="grid gap-1 grid-cols-5 md:grid-cols-10 lg:gap-2">
