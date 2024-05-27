@@ -5,7 +5,6 @@ import Category from "./Category";
 import Products from "./Products";
 import { MyContext } from "@/context/MyContext";
 function Landing() {
-  const { language, setLanguage} = useContext(MyContext);
   return (
     <div className="absolute mt-[10rem] lg:mt-[7rem] lg:ml-[7rem] lg:mr-[7rem] xl:ml-[10rem] xl:mr-[10rem]">
       <div>

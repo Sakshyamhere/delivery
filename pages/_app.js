@@ -1,19 +1,23 @@
 import "@/styles/globals.css";
 import Navbar from "@/components/Navbar";
-import { useEffect, useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import ContextProvider from "@/context/ContextProvider";
-export default function App({ Component, pageProps }) {
-  useEffect(() => {
-    const address = JSON.parse(localStorage.getItem("Address"));
-    if (!address) {
-      document.body.style.overflow = "hidden";
-    }
-  }, []);
+import { useRouter } from "next/router";
 
+export default function App({ Component, pageProps }) {
+  const [renderNavbar, setRenderNavbar] = useState(true);
+  const router = useRouter();
+  useEffect(() => {
+    if (router.pathname === "/login") {
+      setRenderNavbar(false);
+    } else {
+      setRenderNavbar(true);
+    }
+  }, [router.pathname]);
   return (
     <ContextProvider>
       <div className="min-h-full">
-        <Navbar />
+        {renderNavbar && <Navbar />}
         <Component {...pageProps} />
       </div>
     </ContextProvider>

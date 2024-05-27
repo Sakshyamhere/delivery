@@ -6,7 +6,8 @@ import React, { useContext, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 function Products() {
-  const { addItemToCart } = useContext(MyContext);
+  const { addItemToCart, cart, incQuantity, decQuantity } =
+    useContext(MyContext);
   const [products, setProducts] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(10);
@@ -14,8 +15,41 @@ function Products() {
   useEffect(() => {
     fetchData();
   }, []);
+  useEffect(() => {
+    const cartMap = cart.reduce((map, item) => {
+      map[item.product.id] = item;
+      return map;
+    }, {});
+    const updatedProducts = products.map((product) => {
+      const cartItem = cartMap[product.id];
+      if (cartItem) {
+        return {
+          ...product,
+          cartInfo: {
+            cartStatus: true,
+            quantity: cartItem.quantity,
+            index: cart.indexOf(cartItem),
+          },
+        };
+      } else {
+        return {
+          ...product,
+          cartInfo: {
+            cartStatus: false,
+            quantity: 0,
+            index: null,
+          },
+        };
+      }
+    });
+
+    if (JSON.stringify(products) !== JSON.stringify(updatedProducts)) {
+      setProducts(updatedProducts);
+    }
+  }, [cart, products]); // Depend on both cart and products
+
   const fetchData = async () => {
-    await axios
+    axios
       .get(`${BACKEND_URL}/api/v1/products/getproducts?offset=0`)
       .then((res) => {
         setProducts(res.data.products);
@@ -56,19 +90,42 @@ function Products() {
             >
               <Link href={`/product/${item.id}`}>
                 <img alt="dairy-bread-eggs" src={item.image} />
-                <p className="my-1 font-semibold">
+                <p className="my-1 font-semibold text-ellipsis text-nowrap">
                   {item.name}
-                  {item.id}
                 </p>
                 <p className=" font-light text-sm">{item.remark}</p>
                 <p className="my-2 font-semibold">रु{item.price}</p>
               </Link>
-              <button
-                className="text-blue-600 p-1 w-full border border-blue-400 rounded-md"
-                onClick={() => addItemToCart(item)}
-              >
-                Add to cart
-              </button>
+              {item.cartInfo && item.cartInfo.cartStatus === true ? (
+                <div className="flex flex-row justify-center rounded-md items-center bg-red-400 w-[5rem]">
+                  <button
+                    className="text-2xl"
+                    onClick={() => {
+                      incQuantity(item.cartInfo.index);
+                    }}
+                  >
+                    +
+                  </button>
+                  <p className="text-xl mx-2">{item.cartInfo.quantity}</p>
+                  <button
+                    className="text-2xl"
+                    onClick={() => {
+                      decQuantity(item.cartInfo.index);
+                    }}
+                  >
+                    -
+                  </button>
+                </div>
+              ) : (
+                <button
+                  className="text-blue-600 p-1 w-full border border-blue-400 rounded-md"
+                  onClick={() => {
+                    addItemToCart(item);
+                  }}
+                >
+                  Add to cart
+                </button>
+              )}
             </div>
           ))}
         </div>

@@ -4,10 +4,14 @@ import React from "react";
 function Category() {
   const category = [
     {
+      name: "paan-corner",
+      image:
+        "https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/layout-engine/2022-12/paan-corner_web.png",
+    },
+    {
       name: "dairy-bread-eggs",
       image:
         "https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/layout-engine/2022-11/Slice-2_10.png",
-
     },
     {
       name: "fruit-and-vegetable",
@@ -99,26 +103,17 @@ function Category() {
       image:
         "https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/layout-engine/2022-11/Slice-20.png",
     },
-    {
-      name: "electronics",
-      image:
-        "https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/layout-engine/2022-11/Slice-20.png",
-    },
   ];
   return (
     <div className="flex justify-center">
       <div className="grid gap-1 grid-cols-5 md:grid-cols-10 lg:gap-2">
         {category.map((item) => (
-           <div key={item.name}>
-          <Link href={`/category/${item.name}`}>
-            <img
-              alt={item.image}
-              src={item.image}
-            />
-          </Link>
-        </div>
+          <div key={item.name}>
+            <Link href={`/category/${item.name}`}>
+              <img alt={item.name} src={item.image} />
+            </Link>
+          </div>
         ))}
-       
       </div>
     </div>
   );
